@@ -40,9 +40,9 @@ class LinkGuardian(commands.Cog):
         self.config.register_guild(**default_guild_settings)
         self.request_times = deque()  # Track timestamps of API requests
         # Load trusted domains
-        with open(data_manager.cog_data_path(cog_instance=self)+'/trusted_domains.json', 'r') as f:
+        with open(str(data_manager.bundled_data_path(self))+'/trusted_domains.json', 'r') as f:
             self.trusted_domains = json.load(f).get('trusted_domains', [])
-        with open(data_manager.cog_data_path(cog_instance=self)+'/steven-black-hosts', 'r') as f:
+        with open(str(data_manager.bundled_data_path(self))+'/steven-black-hosts', 'r') as f:
             self.blocked_domains = read_hosts_file_domains(f)
         log.info("LinkGuardian Cog has loaded.")
 
