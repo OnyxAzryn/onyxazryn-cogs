@@ -19,7 +19,7 @@ log = logging.getLogger("red.OnyxAzryn-Cogs.LinkGuardian")
 log.setLevel(logging.DEBUG)  # Enable Debug level entries to goto the log
 
 class LinkGuardian(commands.Cog):
-    """Check links for malicious content using VirusTotal."""
+    """Check links for malicious content using VirusTotal and an allow/denylist."""
     # Set some static strings
 
     def __init__(self, bot):
@@ -86,7 +86,7 @@ class LinkGuardian(commands.Cog):
 
     @linkguardian.command(name="enable")
     @checks.admin_or_permissions(manage_guild=True)
-    async def virustotal_toggle(self, ctx):
+    async def linkguardian_toggle(self, ctx):
         """Toggle link checking."""
         enabled = await self.config.guild(ctx.guild).enabled()
 
@@ -375,7 +375,7 @@ class LinkGuardian(commands.Cog):
 
                 # Check against the allowlist and denylist
                 if host_address in self.blocked_domains:
-                    await self.handle_bad_link(guild, message, 1, 0, 1, host_address, [], [])
+                    await self.handle_bad_link(guild, message, 1, 0, 1, host_address, ["blacklist"], [])
                     continue
                 elif host_address in self.trusted_domains:
                     continue
