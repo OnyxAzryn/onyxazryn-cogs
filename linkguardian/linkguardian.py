@@ -11,11 +11,10 @@ import base64 # Used by API to encode URL for submission
 import re
 import urllib.parse
 
+from .constants import *
+
 log = logging.getLogger("red.OnyxAzryn-Cogs.LinkGuardian")
 log.setLevel(logging.DEBUG)  # Enable Debug level entries to goto the log
-
-RATE_LIMIT = 4  # VirusTotal Free Tier: 4 requests per minute
-TIME_WINDOW = 60  # Time window in seconds (1 minute)
 
 class LinkGuardian(commands.Cog):
     """Check links for malicious content using VirusTotal."""
@@ -213,7 +212,7 @@ class LinkGuardian(commands.Cog):
             await ctx.send("Please provide an number value for the threshold.")
 
     async def get_status(self, guild):
-        """Get the current status of the VirusTotal cog."""
+        """Get the current status of the LinkGuardian cog."""
         api_key = await self.bot.get_shared_api_tokens("virustotal")  # Use the built in API Token handler
 
         # Load the Guild configuration information
@@ -346,15 +345,10 @@ class LinkGuardian(commands.Cog):
 
         headers = {"x-apikey": api_key_value}
 
-        # Improved regular expressions
-        url_regex = r'https?://(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}(?:[/?#][^\s]*)?'
-        ipv4_regex = r'\b(?:\d{1,3}\.){3}\d{1,3}\b'
-        ipv6_regex = r'\b(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}\b'
-
         # Combine all address matches
-        urls = re.findall(url_regex, message.content)
-        ipv4_addresses = re.findall(ipv4_regex, message.content)
-        ipv6_addresses = re.findall(ipv6_regex, message.content)
+        urls = re.findall(URL_REGEX, message.content)
+        ipv4_addresses = re.findall(IPV4_REGEX, message.content)
+        ipv6_addresses = re.findall(IPV6_REGEX, message.content)
 
         all_addresses = set(urls + ipv4_addresses + ipv6_addresses)
         # If all_addresses is empty, there is no point processing the rest.
@@ -376,7 +370,7 @@ class LinkGuardian(commands.Cog):
                 parsed_address = urllib.parse.urlparse(address)
                 host_address = parsed_address.hostname or address  # Use the hostname if URL, else the raw address
 
-                if re.match(ipv4_regex, host_address) or re.match(ipv6_regex, host_address):
+                if re.match(IPV4_REGEX, host_address) or re.match(IPV6_REGEX, host_address):
                     url = f"https://www.virustotal.com/api/v3/ip_addresses/{host_address}"
                     scan_type = "ip"
                 else:
@@ -396,10 +390,8 @@ class LinkGuardian(commands.Cog):
                     json_response = await response.json()
                     analysis_results = json_response.get("data", {}).get("attributes", {}).get("last_analysis_results", {})
 
-                    # Exclude Quttera engine due to false positives, and calculate totals
-                    analysis_results.pop("Quttera", None)
-                    # Exclude CRDF, who returns 0.0.0.0 as Malicious
-                    analysis_results.pop("CRDF", None)
+                    for i in EXCLUDED_ANALYZERS:
+                        analysis_results.pop(i, None)
 
                     malicious_engines = [engine for engine, result in analysis_results.items() if result['category'] == 'malicious']
                     suspicious_engines = [engine for engine, result in analysis_results.items() if result['category'] == 'suspicious']
