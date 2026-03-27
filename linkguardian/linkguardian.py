@@ -108,7 +108,7 @@ class LinkGuardian(commands.Cog):
 
     @linkguardian.command(name="status")
     @checks.admin_or_permissions(manage_guild=True)
-    async def virustotal_status(self, ctx):
+    async def linkguardian_status(self, ctx):
         """Show the current status of LinkGuardian settings."""
         guild = ctx.guild
         embed = await self.get_status(guild)
@@ -121,7 +121,7 @@ class LinkGuardian(commands.Cog):
 
     @linkguardian_setgroup.command(name="debug")
     @checks.admin_or_permissions(manage_guild=True)
-    async def virustotal_debug(self, ctx):
+    async def linkguardian_debug(self, ctx):
         """Toggle debugging logs."""
         debug = await self.config.guild(ctx.guild).debug()
         await self.config.guild(ctx.guild).debug.set(not debug)
@@ -129,7 +129,7 @@ class LinkGuardian(commands.Cog):
 
     @linkguardian_setgroup.command(name="dmuser")
     @checks.admin_or_permissions(manage_guild=True)
-    async def virustotal_dmuser(self, ctx):
+    async def linkguardian_dmuser(self, ctx):
         '''Enable/Disable Sending DM Notifications to the User'''
         dmuser = await self.config.guild(ctx.guild).dmuser()
         await self.config.guild(ctx.guild).dmuser.set(not dmuser)
@@ -362,10 +362,6 @@ class LinkGuardian(commands.Cog):
         if not all_addresses:
             return
 
-        if await self.rate_limited(guild):
-            log.warning("API Rate limit exceeded! Skipping VirusTotal checks.")
-            return  # Skip API calls if rate limit is exceeded
-
         if debug:
             log.debug(f"Addresses found: {all_addresses}")
 
@@ -379,12 +375,15 @@ class LinkGuardian(commands.Cog):
 
                 # Check against the allowlist and denylist
                 if host_address in self.blocked_domains:
-                    await self.handle_bad_link(
-                            guild, message, 1, 0, 0, host_address, [], []
-                        )
+                    await self.handle_bad_link(guild, message, 1, 0, 1, host_address, [], [])
                     continue
                 elif host_address in self.trusted_domains:
                     continue
+
+                # We're about to check VirusTotal, so increment the counter and check for rate limiting
+                if await self.rate_limited(guild):
+                    log.warning("API Rate limit exceeded! Skipping VirusTotal checks.")
+                    return  # Skip API calls if rate limit is exceeded
 
                 if re.match(IPV4_REGEX, host_address) or re.match(IPV6_REGEX, host_address):
                     url = f"https://www.virustotal.com/api/v3/ip_addresses/{host_address}"
