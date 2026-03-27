@@ -522,6 +522,7 @@ class LinkGuardian(commands.Cog):
 
             # ----- Allow/Deny list checks -------------------------------------------------
             if host in self.blocked_domains:
+                log.info(f"{host} is deny-listed, blocking...")
                 await self.handle_bad_link(
                     guild,
                     message,
@@ -534,9 +535,11 @@ class LinkGuardian(commands.Cog):
                 )
                 continue
             if host in self.trusted_domains:
+                log.info(f"{host} is allow-listed, allowing...")
                 continue
             if host in self.seen_links:
                 if self.seen_links[host]:  # previously flagged as bad
+                    log.info(f"{host} is known to be bad, blocking...")
                     await self.handle_bad_link(
                         guild,
                         message,
@@ -547,6 +550,8 @@ class LinkGuardian(commands.Cog):
                         malicious_engines=["Previously Reported"],
                         suspicious_engines=[],
                     )
+                else:
+                    log.info(f"{host} is known to be good, allowing...")
                 continue
 
             # ----- Rate‑limit check -------------------------------------------------------
@@ -602,6 +607,7 @@ class LinkGuardian(commands.Cog):
 
                 # ----- Decide whether the link is bad -----------------------------------
                 if malicious >= 1 or suspicious >= cfg["threshold"]:
+                    log.info(f"{host} is malicious, blocking...")
                     link_display = (
                         raw
                         if scan_type == "ip"
@@ -617,6 +623,8 @@ class LinkGuardian(commands.Cog):
                         malicious_engines,
                         suspicious_engines,
                     )
+                else:
+                    log.info(f"{host} passed all checks, allowing...")
 
                 # ----- Cache the result for future messages ---------------------------
                 self.seen_links[host] = (malicious + suspicious) > 0
