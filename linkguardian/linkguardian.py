@@ -126,7 +126,7 @@ class LinkGuardian(commands.Cog):
         '''Enable/Disable Sending DM Notifications to the User'''
         dmuser = await self.config.guild(ctx.guild).dmuser()
         await self.config.guild(ctx.guild).dmuser.set(not dmuser)
-        await ctx.send(f"VirusTotal {'will' if not dmuser else 'will not'} send a DM to the user when triggered.")
+        await ctx.send(f"LinkGuardian {'will' if not dmuser else 'will not'} send a DM to the user when triggered.")
 
     @linkguardian_setgroup.command(name="exclude")
     @checks.admin_or_permissions(manage_guild=True)
