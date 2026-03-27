@@ -19,10 +19,10 @@ log = logging.getLogger("red.OnyxAzryn-Cogs.LinkGuardian")
 log.setLevel(logging.DEBUG)  # Enable Debug level entries to goto the log
 
 # Load trusted domains
-with open('trusted_domains.json', 'r') as f:
+with open('./trusted_domains.json', 'r') as f:
     trusted_domains = json.load(f).get('trusted_domains', [])
 
-with open('steven-black-hosts', 'r') as f:
+with open('./steven-black-hosts', 'r') as f:
     blocked_domains = read_hosts_file_domains(f)
 
 class LinkGuardian(commands.Cog):
