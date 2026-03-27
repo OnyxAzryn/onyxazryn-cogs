@@ -35,8 +35,7 @@ class LinkGuardian(commands.Cog):
             "threshold": 5,
             "debug": False,
             "dmuser": True,
-            "modlog_channel": None,
-            "bleed_prefix": ","
+            "modlog_channel": None
         }
         self.config.register_guild(**default_guild_settings)
         self.request_times = deque()  # Track timestamps of API requests
@@ -527,10 +526,21 @@ class LinkGuardian(commands.Cog):
                     log.error(f"An unexpected error occurred while creating a modlog case: {e}")
 
                 # Do the Punishing
-                bleed_prefix = config["bleed_prefix"]
-                await punishment_channel.send(f'{bleed_prefix}jail <@{member.id}>')
-                if debug:
-                    log.info(f'Punish string: {bleed_prefix}jail <@{member.id}>')
+                try:
+                    # Remove all roles from the user except @everyone
+                    roles_to_remove = [role for role in member.roles if role != guild.default_role]
+                    await member.remove_roles(*roles_to_remove)
+
+                    # Assign the punishment role
+                    punishment_role_id = await self.config.guild(message.guild).punishment_role()
+                    if punishment_role_id:
+                        punishment_role = message.guild.get_role(punishment_role_id)
+                        await member.add_roles(punishment_role)
+
+                except discord.errors.Forbidden:
+                    log.warning(f"Bot does not have permissions to manage roles for {member.name} ({member.id}).")
+                except discord.errors.HTTPException:
+                    log.warning(f"Managing roles for {member.name} failed.")
 
             # Handle the Link in the Message
             try:
