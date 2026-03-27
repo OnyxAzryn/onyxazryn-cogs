@@ -23,7 +23,7 @@ class LinkGuardian(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=736848614378176543, force_registration=True)
+        self.config = Config.get_conf(self, identifier=923480957876572539, force_registration=True)
         default_guild_settings = {
             "enabled": False,
             "excluded_roles": [],
@@ -220,9 +220,6 @@ class LinkGuardian(commands.Cog):
         config = await self.config.guild(guild).all()
 
         debug = config["debug"]
-        if debug:
-            # !!SECURITY WARNING!!  This WILL display your API Token in plaintext in the logs
-            log.debug(f"get_shared_api_tokens: {api_key}")
 
         # Get Cog Status
         enabled = config["enabled"]
@@ -246,7 +243,7 @@ class LinkGuardian(commands.Cog):
         dmuser = config["dmuser"]
 
         # Create the Embed that will be returned with the above status
-        embed = discord.Embed(title="VirusTotal Status", color=discord.Color.blue())
+        embed = discord.Embed(title="LinkGuardian Status", color=discord.Color.blue())
         embed.add_field(name="Link checking", value="✅ Enabled" if enabled else "❌ Disabled", inline=False)
         embed.add_field(name="VirusTotal API key", value="✅ Set" if api_key.get("api_key") is not None else "❌ Not set", inline=False)
         if punishment_role:
