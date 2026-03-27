@@ -1,0 +1,8 @@
+{
+    "author" : ["Onyx Azryn"],
+    "install_msg" : "Thank you for installing my repo!",
+    "name" : "onyxazryn-cogs",
+    "short" : "Onyx Azryn's Cogs for RedBot!",
+    "description" : "Onyx Azryn's Cogs for RedBot!",
+    "tags" : ["utility", "functionalities"]
+}

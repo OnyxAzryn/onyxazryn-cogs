@@ -1,0 +1,10 @@
+{
+    "name": "LinkGuardian",
+    "author": ["OnyxAzryn"],
+    "description": "A link scanner that utilizes Steven Black's Host file.",
+    "short": "A link scanner that utilizes Steven Black's Host file.",
+    "install_msg": "Thanks for installing LinkGuardian!",
+    "requirements": [],
+    "tags": ["utility", "fun"],
+    "hidden": false
+}
