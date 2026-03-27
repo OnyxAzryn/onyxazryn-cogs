@@ -75,7 +75,7 @@ class LinkGuardian(commands.Cog):
     @commands.guild_only()
     @checks.admin_or_permissions(manage_guild=True)
     async def linkguardian(self, ctx):
-        """Manage VirusTotal link checking."""
+        """Manage LinkGuardian link checking."""
         pass
 
     @linkguardian.command(name="enable")
@@ -90,20 +90,20 @@ class LinkGuardian(commands.Cog):
 
         # Flip the current status
         await self.config.guild(ctx.guild).enabled.set(not enabled)
-        await ctx.send(f"VirusTotal link checking is now {'enabled' if not enabled else 'disabled'}.")
-        log.info(f"VirusTotal link checking is now {'enabled' if not enabled else 'disabled'}.")
+        await ctx.send(f"LinkGuardian is now {'enabled' if not enabled else 'disabled'}.")
+        log.info(f"LinkGuardian is now {'enabled' if not enabled else 'disabled'}.")
 
     @linkguardian.command(name="reset")
     @checks.admin_or_permissions(manage_guild=True)
     async def reset_settings(self, ctx):
-        """Reset VirusTotal settings to default."""
+        """Reset LinkGuardian settings to default."""
         await self.config.guild(ctx.guild).clear()
-        await ctx.send("VirusTotal settings have been reset to default.")
+        await ctx.send("LinkGuardian settings have been reset to default.")
 
     @linkguardian.command(name="status")
     @checks.admin_or_permissions(manage_guild=True)
     async def virustotal_status(self, ctx):
-        """Show the current status of VirusTotal settings."""
+        """Show the current status of LinkGuardian settings."""
         guild = ctx.guild
         embed = await self.get_status(guild)
         await ctx.send(embed=embed)
@@ -111,7 +111,7 @@ class LinkGuardian(commands.Cog):
     @linkguardian.group(name="set")
     @checks.admin_or_permissions(manage_guild=True)
     async def linkguardian_setgroup(self, ctx):
-        """Set various configurations for VirusTotal."""
+        """Set various configurations for LinkGuardian."""
 
     @linkguardian_setgroup.command(name="debug")
     @checks.admin_or_permissions(manage_guild=True)
@@ -119,7 +119,7 @@ class LinkGuardian(commands.Cog):
         """Toggle debugging logs."""
         debug = await self.config.guild(ctx.guild).debug()
         await self.config.guild(ctx.guild).debug.set(not debug)
-        await ctx.send(f"VirusTotal debug logging is now {'enabled' if not debug else 'disabled'}.")
+        await ctx.send(f"LinkGuardian debug logging is now {'enabled' if not debug else 'disabled'}.")
 
     @linkguardian_setgroup.command(name="dmuser")
     @checks.admin_or_permissions(manage_guild=True)
@@ -151,7 +151,7 @@ class LinkGuardian(commands.Cog):
             excluded_roles_str = "\n".join([f"- {guild.get_role(role_id).name}" for role_id in excluded_roles])
         else:
             excluded_roles_str = "None"
-        await ctx.send(f"The following roles have been excluded from VirusTotal link checking:\n{excluded_roles_str}")
+        await ctx.send(f"The following roles have been excluded from LinkGuardian:\n{excluded_roles_str}")
 
     @linkguardian_setgroup.command(name="modlog")
     @checks.admin_or_permissions(manage_guild=True)
