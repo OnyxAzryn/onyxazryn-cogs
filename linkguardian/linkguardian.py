@@ -39,6 +39,7 @@ class LinkGuardian(commands.Cog):
         }
         self.config.register_guild(**default_guild_settings)
         self.request_times = deque()  # Track timestamps of API requests
+        self.seen_links = {}
         # Load trusted domains
         with open(str(data_manager.bundled_data_path(self))+'/trusted_domains.json', 'r') as f:
             self.trusted_domains = json.load(f).get('trusted_domains', [])
@@ -375,10 +376,17 @@ class LinkGuardian(commands.Cog):
 
                 # Check against the allowlist and denylist
                 if host_address in self.blocked_domains:
-                    await self.handle_bad_link(guild, message, 1, 0, 1, host_address, ["blacklist"], [])
+                    await self.handle_bad_link(guild, message, 1, 0, 1, host_address, ["Denylist"], [])
                     continue
                 elif host_address in self.trusted_domains:
                     continue
+                elif host_address in self.seen_links.keys():
+                    # If we have seen a bad link before, it will be true here
+                    if self.seen_links[host_address]:
+                        await self.handle_bad_link(guild, message, 1, 0, 1, host_address, ["Previously Reported"], [])
+                        continue
+                    else:
+                        continue
 
                 # We're about to check VirusTotal, so increment the counter and check for rate limiting
                 if await self.rate_limited(guild):
@@ -427,6 +435,9 @@ class LinkGuardian(commands.Cog):
                         await self.handle_bad_link(
                             guild, message, malicious, suspicious, total_scanners, link, malicious_engines, suspicious_engines
                         )
+
+                    # Save the link as previously seen
+                    self.seen_links[host_address] = (malicious + suspicious) > 0
 
     async def handle_bad_link(self, guild, message, num_malicious: int, num_suspicious: int, total_scanners: int, link, malicious_engines: list, suspicious_engines: list):
         member = message.author
