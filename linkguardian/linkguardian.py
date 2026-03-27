@@ -380,7 +380,7 @@ class LinkGuardian(commands.Cog):
                 # Check against the allowlist and denylist
                 if host_address in self.blocked_domains:
                     await self.handle_bad_link(
-                            guild, message, None, None, None, host_address, None, None
+                            guild, message, 1, 0, 0, host_address, [], []
                         )
                     continue
                 elif host_address in self.trusted_domains:
