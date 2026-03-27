@@ -1,6 +1,6 @@
 # Logic adapted from https://github.com/Grommish/Grommish-Cogs/blob/main/virustotal/virustotal.py
 
-from redbot.core import commands, Config, checks, modlog
+from redbot.core import commands, Config, checks, modlog, data_manager
 from collections import deque
 import time
 import aiohttp
@@ -17,13 +17,6 @@ from .utils import read_hosts_file_domains
 
 log = logging.getLogger("red.OnyxAzryn-Cogs.LinkGuardian")
 log.setLevel(logging.DEBUG)  # Enable Debug level entries to goto the log
-
-# Load trusted domains
-with open('./trusted_domains.json', 'r') as f:
-    trusted_domains = json.load(f).get('trusted_domains', [])
-
-with open('./steven-black-hosts', 'r') as f:
-    blocked_domains = read_hosts_file_domains(f)
 
 class LinkGuardian(commands.Cog):
     """Check links for malicious content using VirusTotal."""
@@ -46,6 +39,11 @@ class LinkGuardian(commands.Cog):
         }
         self.config.register_guild(**default_guild_settings)
         self.request_times = deque()  # Track timestamps of API requests
+        # Load trusted domains
+        with open(data_manager.cog_data_path(cog_instance=self)+'/trusted_domains.json', 'r') as f:
+            self.trusted_domains = json.load(f).get('trusted_domains', [])
+        with open(data_manager.cog_data_path(cog_instance=self)+'/steven-black-hosts', 'r') as f:
+            self.blocked_domains = read_hosts_file_domains(f)
         log.info("LinkGuardian Cog has loaded.")
 
     async def rate_limited(self, guild) -> bool:
@@ -380,10 +378,10 @@ class LinkGuardian(commands.Cog):
                 host_address = parsed_address.hostname or address  # Use the hostname if URL, else the raw address
 
                 # Check against the allowlist and denylist
-                if host_address in blocked_domains:
+                if host_address in self.blocked_domains:
                     await message.delete()
                     continue
-                elif host_address in trusted_domains:
+                elif host_address in self.trusted_domains:
                     continue
 
                 if re.match(IPV4_REGEX, host_address) or re.match(IPV6_REGEX, host_address):
