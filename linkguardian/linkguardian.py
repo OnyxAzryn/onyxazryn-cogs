@@ -529,6 +529,8 @@ class LinkGuardian(commands.Cog):
                 # Do the Punishing
                 bleed_prefix = config["bleed_prefix"]
                 await punishment_channel.send(f'{bleed_prefix}jail <@{member.id}>')
+                if debug:
+                    log.info(f'Punish string: {bleed_prefix}jail <@{member.id}>')
 
             # Handle the Link in the Message
             try:
