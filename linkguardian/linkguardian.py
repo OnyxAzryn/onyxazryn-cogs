@@ -606,7 +606,8 @@ class LinkGuardian(commands.Cog):
                 )
 
                 # ----- Decide whether the link is bad -----------------------------------
-                if malicious >= 1 or suspicious >= cfg["threshold"]:
+                is_bad = malicious >= 1 or suspicious >= cfg["threshold"]
+                if is_bad:
                     log.info(f"{host} is malicious, blocking...")
                     link_display = (
                         raw
@@ -627,7 +628,7 @@ class LinkGuardian(commands.Cog):
                     log.info(f"{host} passed all checks, allowing...")
 
                 # ----- Cache the result for future messages ---------------------------
-                self.seen_links[host] = (malicious + suspicious) > 0
+                self.seen_links[host] = is_bad
 
     # ----------------------------------------------------------------
     #  Helper – build title/description for the embed
