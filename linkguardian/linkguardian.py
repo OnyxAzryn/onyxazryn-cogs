@@ -525,8 +525,8 @@ class LinkGuardian(commands.Cog):
                 await self.handle_bad_link(
                     guild,
                     message,
-                    malicious=1,
-                    suspicious=0,
+                    num_malicious=1,
+                    num_suspicious=0,
                     total_scanners=1,
                     link=host,
                     malicious_engines=["Denylist"],
@@ -540,8 +540,8 @@ class LinkGuardian(commands.Cog):
                     await self.handle_bad_link(
                         guild,
                         message,
-                        malicious=1,
-                        suspicious=0,
+                        num_malicious=1,
+                        num_suspicious=0,
                         total_scanners=1,
                         link=host,
                         malicious_engines=["Previously Reported"],
