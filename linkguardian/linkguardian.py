@@ -85,8 +85,8 @@ class LinkGuardian(commands.Cog):
         # --------------------- Runtime caches --------------------
         self._rate_tracker: defaultdict[int, deque[float]] = defaultdict(deque)
         self.seen_links: Dict[str, bool] = {}
-        self.trusted_domains: set[str] = {}
-        self.blocked_domains: set[str] = {}
+        self.trusted_domains: set[str] = set([])
+        self.blocked_domains: set[str] = set([])
 
         # ----------------------- HTTP client ---------------------
         self._http: aiohttp.ClientSession = aiohttp.ClientSession()
