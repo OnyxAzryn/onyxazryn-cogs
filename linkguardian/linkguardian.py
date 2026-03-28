@@ -93,8 +93,12 @@ class LinkGuardian(commands.Cog):
 
         # ----------------------- Load data -----------------------
         self._load_trust_lists()
-        # Dedupe from lists
+        # Dedupe from lists and send everything to a dictionary
         self.blocked_domains = list(set(self.blocked_domains))
+        for i in self.trusted_domains:
+            self.seen_links[i] = False
+        for i in self.blocked_domains:
+            self.seen_links[i] = True
         log.info(f"Loaded {len(self.trusted_domains)} trusted domains and {len(self.blocked_domains)} blocked domains!")
 
         log.info("LinkGuardian Cog has loaded.")
@@ -529,22 +533,6 @@ class LinkGuardian(commands.Cog):
             host = parsed.hostname or raw  # ``hostname`` is None for raw IP strings
 
             # ----- Allow/Deny list checks -------------------------------------------------
-            if host in self.blocked_domains or host in self.tif_blocked_domains:
-                log.info(f"{host} is deny-listed, blocking...")
-                await self.handle_bad_link(
-                    guild,
-                    message,
-                    num_malicious=1,
-                    num_suspicious=0,
-                    total_scanners=1,
-                    link=host,
-                    malicious_engines=["Denylist"],
-                    suspicious_engines=[],
-                )
-                continue
-            if host in self.trusted_domains:
-                log.info(f"{host} is allow-listed, allowing...")
-                continue
             if host in self.seen_links:
                 if self.seen_links[host]:  # previously flagged as bad
                     log.info(f"{host} is known to be bad, blocking...")
@@ -555,7 +543,7 @@ class LinkGuardian(commands.Cog):
                         num_suspicious=0,
                         total_scanners=1,
                         link=host,
-                        malicious_engines=["Previously Reported"],
+                        malicious_engines=["Denylist"],
                         suspicious_engines=[],
                     )
                 else:
