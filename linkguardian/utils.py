@@ -43,6 +43,6 @@ def read_hosts_file_domains(f) -> Set[str]:
         host_names = parts[1:]
 
         # Append them to the result list
-        domains.extend(host_names)
+        domains.add(host_names)
 
     return domains
