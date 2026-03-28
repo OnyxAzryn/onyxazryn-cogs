@@ -110,20 +110,18 @@ class LinkGuardian(commands.Cog):
             self.trusted_domains = []
 
         # Blocked domains (hosts style file) https://github.com/hagezi/dns-blocklists
-        try:
-            with open(str(bundled_path / "ultimate.txt"), "r", encoding="utf-8") as f:
-                self.blocked_domains = read_hosts_file_domains(f)
-        except Exception as exc:   # pragma: no cover – defensive
-            log.exception("Failed to load Ultimate Blocklist: %s", exc)
-            self.blocked_domains = []
-
         # Threat Intelligence Feeds (hosts style file) https://github.com/hagezi/dns-blocklists
-        try:
-            with open(str(bundled_path / "tif.txt"), "r", encoding="utf-8") as f:
-                self.tif_blocked_domains = read_hosts_file_domains(f)
-        except Exception as exc:   # pragma: no cover – defensive
-            log.exception("Failed to load Threat Intelligence Feeds: %s", exc)
-            self.tif_blocked_domains = []
+        # Steven Black Hosts (hosts style file) https://raw.githubusercontent.com/StevenBlack/hosts/refs/heads/master/hosts
+        hosts_files = ["ultimate.txt", "tif.txt", "hosts.txt"]
+
+        # Blocked domains (hosts style file) https://github.com/hagezi/dns-blocklists
+        self.blocked_domains = []
+        for i in hosts_files:
+            try:
+                with open(str(bundled_path / i), "r", encoding="utf-8") as f:
+                    self.blocked_domains += read_hosts_file_domains(f)
+            except Exception as exc:   # pragma: no cover – defensive
+                log.exception(f"Failed to load blocklist {i}: %s", exc)
 
     async def cog_unload(self) -> None:
         """Close the aiohttp session when the cog is unloaded."""
