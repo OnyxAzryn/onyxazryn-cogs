@@ -108,13 +108,21 @@ class LinkGuardian(commands.Cog):
             log.exception("Failed to load trusted_domains.json: %s", exc)
             self.trusted_domains = []
 
-        # Blocked domains (hosts style file)
+        # Blocked domains (hosts style file) https://github.com/hagezi/dns-blocklists
         try:
-            with open(str(bundled_path / "steven-black-hosts"), "r", encoding="utf-8") as f:
+            with open(str(bundled_path / "ultimate.txt"), "r", encoding="utf-8") as f:
                 self.blocked_domains = read_hosts_file_domains(f)
         except Exception as exc:   # pragma: no cover – defensive
-            log.exception("Failed to load steven-black-hosts: %s", exc)
+            log.exception("Failed to load Ultimate Blocklist: %s", exc)
             self.blocked_domains = []
+
+        # Threat Intelligence Feeds (hosts style file) https://github.com/hagezi/dns-blocklists
+        try:
+            with open(str(bundled_path / "tif.txt"), "r", encoding="utf-8") as f:
+                self.tif_blocked_domains = read_hosts_file_domains(f)
+        except Exception as exc:   # pragma: no cover – defensive
+            log.exception("Failed to load Threat Intelligence Feeds: %s", exc)
+            self.tif_blocked_domains = []
 
     async def cog_unload(self) -> None:
         """Close the aiohttp session when the cog is unloaded."""
@@ -521,7 +529,7 @@ class LinkGuardian(commands.Cog):
             host = parsed.hostname or raw  # ``hostname`` is None for raw IP strings
 
             # ----- Allow/Deny list checks -------------------------------------------------
-            if host in self.blocked_domains:
+            if host in self.blocked_domains or host in self.tif_blocked_domains:
                 log.info(f"{host} is deny-listed, blocking...")
                 await self.handle_bad_link(
                     guild,
