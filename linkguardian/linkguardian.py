@@ -93,7 +93,7 @@ class LinkGuardian(commands.Cog):
 
         # ----------------------- Load data -----------------------
         self._load_trust_lists()
-        log.info(f"Loaded {len(self.trusted_domains)} trusted domains, {len(self.blocked_domains)} blocked domains, and {len(self.tif_blocked_domains)} TIF blocked domains!")
+        log.info(f"Loaded {len(self.trusted_domains)} trusted domains and {len(self.blocked_domains)} blocked domains!")
 
         log.info("LinkGuardian Cog has loaded.")
 
