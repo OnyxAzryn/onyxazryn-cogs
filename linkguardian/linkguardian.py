@@ -85,8 +85,8 @@ class LinkGuardian(commands.Cog):
         # --------------------- Runtime caches --------------------
         self._rate_tracker: defaultdict[int, deque[float]] = defaultdict(deque)
         self.seen_links: Dict[str, bool] = {}
-        self.trusted_domains: List[str] = []
-        self.blocked_domains: List[str] = []
+        self.trusted_domains: set[str] = {}
+        self.blocked_domains: set[str] = {}
 
         # ----------------------- HTTP client ---------------------
         self._http: aiohttp.ClientSession = aiohttp.ClientSession()
@@ -115,7 +115,6 @@ class LinkGuardian(commands.Cog):
         hosts_files = ["ultimate.txt", "tif.txt", "hosts.txt"]
 
         # Blocked domains (hosts style file) https://github.com/hagezi/dns-blocklists
-        self.blocked_domains = []
         for i in hosts_files:
             try:
                 with open(str(bundled_path / i), "r", encoding="utf-8") as f:
