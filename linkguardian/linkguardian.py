@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# --------------------------------------------------------------
-#  LinkGuardian – Red‑DiscordBot Cog (enhanced, behaviour‑preserving)
-# --------------------------------------------------------------
-
 from __future__ import annotations
 
 import base64
@@ -125,7 +120,7 @@ class LinkGuardian(commands.Cog):
         # Steven Black Hosts (hosts style file) https://raw.githubusercontent.com/StevenBlack/hosts/refs/heads/master/hosts
         hosts_files = ["ultimate.txt", "tif.txt", "hosts.txt"]
 
-        # Blocked domains (hosts style file) https://github.com/hagezi/dns-blocklists
+        # Blocked domains (hosts style file)
         for i in hosts_files:
             try:
                 with open(str(bundled_path / i), "r", encoding="utf-8") as f:
@@ -705,10 +700,10 @@ class LinkGuardian(commands.Cog):
         )
         embed.set_footer(text=f"Total Scanners: {total_scanners}")
 
-        # --------------------------------------------------------------
-        #  Apply the configured punishment (only for *malicious* links)
-        # --------------------------------------------------------------
-        if num_malicious >= 1:
+        # --------------------------------
+        #  Apply the configured punishment
+        # --------------------------------
+        if num_malicious >= 1 or num_suspicious > cfg["threshold"]:
             if punishment == "ban":
                 # --- Ban path ------------------------------------------------
                 await self._log_to_modlog(
