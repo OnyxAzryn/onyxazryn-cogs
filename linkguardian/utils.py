@@ -1,6 +1,6 @@
-from typing import List
+from typing import Set
 
-def read_hosts_file_domains(f) -> List[str]:
+def read_hosts_file_domains(f) -> Set[str]:
     """
     Read a hosts file and return a list of all domain/host names it contains.
 
@@ -11,10 +11,10 @@ def read_hosts_file_domains(f) -> List[str]:
 
     Returns
     -------
-    List[str]
+    set[str]
         All host names found, preserving order of appearance.
     """
-    domains: List[str] = []
+    domains: Set[str] = set([])
 
     # Read the file line‑by‑line
     for raw_line in f.readlines():
