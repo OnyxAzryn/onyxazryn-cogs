@@ -13,7 +13,7 @@ import re
 import time
 import urllib.parse
 from collections import deque, defaultdict
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import aiohttp
 import discord
@@ -85,14 +85,16 @@ class LinkGuardian(commands.Cog):
         # --------------------- Runtime caches --------------------
         self._rate_tracker: defaultdict[int, deque[float]] = defaultdict(deque)
         self.seen_links: Dict[str, bool] = {}
-        self.trusted_domains: Set[str] = set([])
-        self.blocked_domains: Set[str] = set([])
+        self.trusted_domains: List[str] = []
+        self.blocked_domains: List[str] = []
 
         # ----------------------- HTTP client ---------------------
         self._http: aiohttp.ClientSession = aiohttp.ClientSession()
 
         # ----------------------- Load data -----------------------
         self._load_trust_lists()
+        # Dedupe from lists
+        self.blocked_domains = list(set(self.blocked_domains))
         log.info(f"Loaded {len(self.trusted_domains)} trusted domains and {len(self.blocked_domains)} blocked domains!")
 
         log.info("LinkGuardian Cog has loaded.")
