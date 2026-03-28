@@ -39,6 +39,13 @@ log.setLevel(logging.DEBUG)   # Debug entries are emitted; admins can toggle via
 JSONDict = Dict[str, Any]
 Embedable = Union[str, discord.Embed]
 
+# ------------------------------------------------------------
+#  Pre‑compile heavy regular‑expressions
+# ------------------------------------------------------------
+_RE_URL = re.compile(URL_REGEX)
+_RE_IPV4 = re.compile(IPV4_REGEX)
+_RE_IPV6 = re.compile(IPV6_REGEX)
+
 # --------------------------------------------------------------------
 #  Cog definition
 # --------------------------------------------------------------------
@@ -98,8 +105,8 @@ class LinkGuardian(commands.Cog):
         log.info(f"Loaded {len(self.trusted_domains)} trusted domains and {len(self.blocked_domains)} blocked domains!")
 
         # Clear the lists for memory reduction
-        self.trusted_domains = []
-        self.blocked_domains = []
+        self.trusted_domains.clear()
+        self.blocked_domains.clear()
 
         log.info("LinkGuardian Cog has loaded.")
 
@@ -182,9 +189,9 @@ class LinkGuardian(commands.Cog):
         Pull URLs, IPv4 and IPv6 addresses from a message string.
         Returns a ``set`` of raw matches (duplicates removed).
         """
-        urls = re.findall(URL_REGEX, content)
-        ipv4 = re.findall(IPV4_REGEX, content)
-        ipv6 = re.findall(IPV6_REGEX, content)
+        urls = _RE_URL.findall(content)
+        ipv4 = _RE_IPV4.findall(content)
+        ipv6 = _RE_IPV6.findall(content)
         return set(urls + ipv4 + ipv6)
 
     async def _log_to_modlog(
