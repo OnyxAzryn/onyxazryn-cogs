@@ -93,13 +93,18 @@ class LinkGuardian(commands.Cog):
 
         # ----------------------- Load data -----------------------
         self._load_trust_lists()
-        # Dedupe from lists and send everything to a dictionary
+
+        # Dedupe from lists, send everything to a dictionary, and log
         self.blocked_domains = list(set(self.blocked_domains))
         for i in self.trusted_domains:
             self.seen_links[i] = False
         for i in self.blocked_domains:
             self.seen_links[i] = True
         log.info(f"Loaded {len(self.trusted_domains)} trusted domains and {len(self.blocked_domains)} blocked domains!")
+
+        # Clear the lists for memory reduction
+        self.trusted_domains = []
+        self.blocked_domains = []
 
         log.info("LinkGuardian Cog has loaded.")
 
