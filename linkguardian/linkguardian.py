@@ -43,9 +43,8 @@ Embedable = Union[str, discord.Embed]
 # ------------------------------------------------------------
 #  Pre‑compile heavy regular‑expressions
 # ------------------------------------------------------------
-_RE_URL = re.compile(URL_REGEX)
-_RE_IPV4 = re.compile(IPV4_REGEX)
-_RE_IPV6 = re.compile(IPV6_REGEX)
+_UNIFIED_REGEX = re.compile("(%s|%s|%s)" % (URL_REGEX, IPV4_REGEX, IPV6_REGEX))
+_IP_REGEX = re.compile("(%s|%s)" % (IPV4_REGEX, IPV6_REGEX))
 
 # --------------------------------------------------------------------
 #  Cog definition
@@ -187,10 +186,7 @@ class LinkGuardian(commands.Cog):
         Pull URLs, IPv4 and IPv6 addresses from a message string.
         Returns a ``set`` of raw matches (duplicates removed).
         """
-        urls = _RE_URL.findall(content)
-        ipv4 = _RE_IPV4.findall(content)
-        ipv6 = _RE_IPV6.findall(content)
-        return set(urls + ipv4 + ipv6)
+        return set(_UNIFIED_REGEX.findall(content))
 
     async def _log_to_modlog(
         self,
@@ -561,7 +557,7 @@ class LinkGuardian(commands.Cog):
                 return
 
             # ----- Build the VT endpoint ---------------------------------------------------
-            if _RE_IPV4.fullmatch(host) or _RE_IPV6.fullmatch(host):
+            if _IP_REGEX.fullmatch(host):
                 vt_url = f"{VIRUS_TOTAL_API}/ip_addresses/{host}"
                 scan_type = "ip"
             else:
