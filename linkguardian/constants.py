@@ -6,3 +6,4 @@ IPV6_REGEX = r'\b(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}\b'
 # Exclude Quttera engine due to false positives, and calculate totals
 # Exclude CRDF, who returns 0.0.0.0 as Malicious
 EXCLUDED_ANALYZERS = ["Quttera", "CRDF"]
+VIRUS_TOTAL_API = "https://www.virustotal.com/api/v3"

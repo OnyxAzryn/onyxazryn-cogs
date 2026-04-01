@@ -24,6 +24,7 @@ from .constants import (
     RATE_LIMIT,
     TIME_WINDOW,
     URL_REGEX,
+    VIRUS_TOTAL_API
 )
 from .utils import read_hosts_file_domains
 
@@ -122,10 +123,7 @@ class LinkGuardian(commands.Cog):
             log.exception("Failed to load trusted_domains.json: %s", exc)
             self.trusted_domains = []
 
-        # Blocked domains (hosts style file) https://github.com/hagezi/dns-blocklists
-        # Threat Intelligence Feeds (hosts style file) https://github.com/hagezi/dns-blocklists
-        # Steven Black Hosts (hosts style file) https://raw.githubusercontent.com/StevenBlack/hosts/refs/heads/master/hosts
-        hosts_files = ["ultimate.txt", "tif.txt", "hosts.txt"]
+        hosts_files = ["hosts.txt", "tif.txt", "ultimate.txt"]
 
         # Blocked domains (hosts style file)
         for i in hosts_files:
@@ -563,13 +561,13 @@ class LinkGuardian(commands.Cog):
                 return
 
             # ----- Build the VT endpoint ---------------------------------------------------
-            if re.fullmatch(IPV4_REGEX, host) or re.fullmatch(IPV6_REGEX, host):
-                vt_url = f"https://www.virustotal.com/api/v3/ip_addresses/{host}"
+            if _RE_IPV4.fullmatch(host) or _RE_IPV6.fullmatch(host):
+                vt_url = f"{VIRUS_TOTAL_API}/ip_addresses/{host}"
                 scan_type = "ip"
             else:
                 # VT expects a base64‑url‑safe representation without padding
                 encoded = base64.urlsafe_b64encode(raw.encode()).decode().rstrip("=")
-                vt_url = f"https://www.virustotal.com/api/v3/urls/{encoded}"
+                vt_url = f"{VIRUS_TOTAL_API}/urls/{encoded}"
                 scan_type = "url"
 
             await self._debug(guild, f"VT request URL: {vt_url} (type={scan_type})")
