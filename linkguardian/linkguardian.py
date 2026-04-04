@@ -203,7 +203,7 @@ class LinkGuardian(commands.Cog):
             await modlog.create_case(
                 self.bot,
                 guild,
-                datetime.datetime.utcnow(),
+                datetime.now(datetime.UTC),
                 user=member,
                 moderator=guild.me,
                 reason=reason,
@@ -227,7 +227,7 @@ class LinkGuardian(commands.Cog):
                     title="User Moderation",
                     description=f"**User:** {member} ({member.id})\n**Reason:** {reason}",
                     color=discord.Color.red(),
-                    timestamp=datetime.datetime.utcnow(),
+                    timestamp=datetime.now(datetime.UTC),
                 )
                 embed.set_footer(text=f"Guild: {guild.name}")
                 try:
@@ -685,7 +685,7 @@ class LinkGuardian(commands.Cog):
             title=title,
             description=description,
             color=discord.Color.red(),
-            timestamp=datetime.datetime.utcnow(),
+            timestamp=datetime.now(datetime.UTC),
         )
         embed.add_field(name="User", value=f"{member} ({member.id})", inline=False)
         embed.add_field(name="Link", value=link, inline=False)
