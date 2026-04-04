@@ -1,6 +1,6 @@
 RATE_LIMIT = 4  # VirusTotal Free Tier: 4 requests per minute
 TIME_WINDOW = 60  # Time window in seconds (1 minute)
-URL_REGEX = r'https?://(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}(?:[/?#][^\s]*)?'
+URL_REGEX = r'(?i)\b(?:[a-z][\w.+-]+:(?:/{1,3}|[?+]?[a-z0-9%]))(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s\x60!()\[\]{};:\'".,<>?«»“”‘’])'
 IPV4_REGEX = r'\b(?:\d{1,3}\.){3}\d{1,3}\b'
 IPV6_REGEX = r'\b(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}\b'
 # Exclude Quttera engine due to false positives, and calculate totals
