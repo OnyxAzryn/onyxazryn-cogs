@@ -43,7 +43,7 @@ Embedable = Union[str, discord.Embed]
 # ------------------------------------------------------------
 #  Pre‑compile heavy regular‑expressions
 # ------------------------------------------------------------
-_UNIFIED_REGEX = re.compile("(%s|%s|%s)" % (URL_REGEX, IPV4_REGEX, IPV6_REGEX))
+_UNIFIED_REGEX = re.compile("(?i)(%s|%s|%s)" % (URL_REGEX, IPV4_REGEX, IPV6_REGEX))
 _IP_REGEX = re.compile("(%s|%s)" % (IPV4_REGEX, IPV6_REGEX))
 
 # --------------------------------------------------------------------
