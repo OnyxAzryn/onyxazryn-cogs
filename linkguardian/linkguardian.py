@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import base64
-import datetime
 import json
 import logging
 import re
 import time
 import urllib.parse
 from collections import deque, defaultdict
+from datetime import datetime, UTC
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import aiohttp
@@ -203,7 +203,7 @@ class LinkGuardian(commands.Cog):
             await modlog.create_case(
                 self.bot,
                 guild,
-                datetime.now(datetime.UTC),
+                datetime.now(UTC),
                 user=member,
                 moderator=guild.me,
                 reason=reason,
@@ -227,7 +227,7 @@ class LinkGuardian(commands.Cog):
                     title="User Moderation",
                     description=f"**User:** {member} ({member.id})\n**Reason:** {reason}",
                     color=discord.Color.red(),
-                    timestamp=datetime.now(datetime.UTC),
+                    timestamp=datetime.now(UTC),
                 )
                 embed.set_footer(text=f"Guild: {guild.name}")
                 try:
@@ -685,7 +685,7 @@ class LinkGuardian(commands.Cog):
             title=title,
             description=description,
             color=discord.Color.red(),
-            timestamp=datetime.now(datetime.UTC),
+            timestamp=datetime.now(UTC),
         )
         embed.add_field(name="User", value=f"{member} ({member.id})", inline=False)
         embed.add_field(name="Link", value=link, inline=False)
